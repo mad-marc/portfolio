@@ -40,8 +40,10 @@ const { title, description = "Marc Solé Domènech — Product Management Leader
     <header class="max-w-2xl mx-auto px-6 py-8">
       <nav class="flex items-center justify-between">
         <a href="/" class="flex items-center gap-2.5 group">
-          <span class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-xs font-semibold tracking-wide shrink-0">MS</span>
-          <span class="text-sm font-medium text-brand-text group-hover:text-accent transition-colors">Marc Solé</span>
+          <svg id="logo-svg" width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer;transform-origin:center center;flex-shrink:0;">
+            <path id="logo-svg-path" d="M50 12C46 20 38 34 32 46C26 58 20 70 18 78C16 84 20 86 28 86C38 86 48 87 52 87C56 87 66 86 74 86C80 86 84 84 82 78C80 70 74 58 68 46C62 34 54 20 50 12Z" fill="#C4654A"/>
+          </svg>
+          <span class="text-sm font-medium text-neutral-900 group-hover:text-accent transition-colors">Marc Solé</span>
         </a>
         <ul class="flex gap-6 text-sm text-neutral-500">
           <li><a href="/projects" class="hover:text-accent transition-colors">Projects</a></li>
@@ -71,6 +73,121 @@ const { title, description = "Marc Solé Domènech — Product Management Leader
       }, { threshold: 0.1 });
 
       document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // ── Logo SVG animation ──────────────────────────────────────────
+      const logoPath = document.getElementById('logo-svg-path') as SVGPathElement | null;
+      const logoSvg  = document.getElementById('logo-svg') as SVGSVGElement | null;
+
+      if (logoPath && logoSvg) {
+        // Base coordinates: flat [x,y,x,y,...] matching the path segments
+        // M  then 8 cubic bezier segments (6 coords each) = 2 + 48 = 50 values
+        const base = [
+          50, 12,                          // M  — TOP TIP
+          46, 20, 38, 34, 32, 46,          // C1
+          26, 58, 20, 70, 18, 78,          // C2 — near BL
+          16, 84, 20, 86, 28, 86,          // C3 — BOTTOM-LEFT TIP
+          38, 86, 48, 87, 52, 87,          // C4 — bottom
+          56, 87, 66, 86, 74, 86,          // C5 — near BR
+          80, 86, 84, 84, 82, 78,          // C6 — BOTTOM-RIGHT TIP
+          80, 70, 74, 58, 68, 46,          // C7
+          62, 34, 54, 20, 50, 12,          // C8 — back to top
+        ];
+
+        // 3 tip positions and their outward directions from centroid (50, 61)
+        const tips = [
+          { px: 50, py: 12,  dx:  0,    dy: -1   }, // top
+          { px: 18, py: 84,  dx: -0.8,  dy:  0.6 }, // bottom-left
+          { px: 82, py: 84,  dx:  0.8,  dy:  0.6 }, // bottom-right
+        ];
+        const TIP_RADIUS  = 26;  // influence radius
+        const STRETCH_MAX = 14;  // px stretch outward
+
+        // Independent sine params for each tip
+        const tipAnim = [
+          { speed: 1 / 3.2, phase: 0 },
+          { speed: 1 / 3.8, phase: Math.PI * 0.7 },
+          { speed: 1 / 3.5, phase: Math.PI * 1.4 },
+        ];
+
+        // Tremble state (updated at 12fps)
+        const TREMBLE_INTERVAL = 1000 / 12;
+        let lastTrembleT = 0;
+        const tremble = new Float32Array(base.length); // pre-allocated
+
+        function updateTremble() {
+          for (let i = 0; i < tremble.length; i++) {
+            tremble[i] = (Math.random() * 2 - 1) * 1.8;
+          }
+        }
+
+        function tipWeight(bx: number, by: number, ti: number): number {
+          const dist = Math.hypot(bx - tips[ti].px, by - tips[ti].py);
+          return Math.max(0, 1 - dist / TIP_RADIUS);
+        }
+
+        function buildPath(c: number[]): string {
+          let d = `M${c[0].toFixed(2)} ${c[1].toFixed(2)}`;
+          for (let i = 2; i < c.length; i += 6) {
+            d += `C${c[i].toFixed(2)} ${c[i+1].toFixed(2)} ${c[i+2].toFixed(2)} ${c[i+3].toFixed(2)} ${c[i+4].toFixed(2)} ${c[i+5].toFixed(2)}`;
+          }
+          return d + 'Z';
+        }
+
+        // Rotation state
+        let rotating   = false;
+        let rotAngle   = 0;
+
+        function triggerRotation() {
+          if (rotating) return;
+          rotating = true;
+          const start     = performance.now();
+          const duration  = 2500;
+          const fromAngle = rotAngle;
+          function stepRot(now: number) {
+            const p = Math.min((now - start) / duration, 1);
+            const e = p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2; // ease in-out cubic
+            rotAngle = fromAngle + e * 360;
+            logoSvg!.style.transform = `rotate(${rotAngle}deg)`;
+            if (p < 1) { requestAnimationFrame(stepRot); }
+            else { rotAngle %= 360; rotating = false; }
+          }
+          requestAnimationFrame(stepRot);
+        }
+
+        logoSvg.addEventListener('mouseenter', triggerRotation);
+        logoSvg.addEventListener('click',      triggerRotation);
+
+        // Main animation loop
+        function animate(ts: number) {
+          if (ts - lastTrembleT > TREMBLE_INTERVAL) {
+            updateTremble();
+            lastTrembleT = ts;
+          }
+
+          const t = ts / 1000;
+          const stretches = tipAnim.map(({ speed, phase }) => {
+            return (Math.sin(phase + t * speed * Math.PI * 2) + 1) / 2 * STRETCH_MAX;
+          });
+
+          const coords: number[] = [];
+          for (let i = 0; i < base.length; i += 2) {
+            const bx = base[i], by = base[i + 1];
+            let dx = tremble[i], dy = tremble[i + 1];
+            for (let ti = 0; ti < 3; ti++) {
+              const w = tipWeight(bx, by, ti);
+              dx += tips[ti].dx * stretches[ti] * w;
+              dy += tips[ti].dy * stretches[ti] * w;
+            }
+            coords.push(bx + dx, by + dy);
+          }
+
+          logoPath!.setAttribute('d', buildPath(coords));
+          requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
+      }
+      // ── End logo animation ──────────────────────────────────────────
 
       // Parallax on profile image (RAF throttled)
       const img = document.getElementById('profile-img');
