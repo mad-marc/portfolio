@@ -1,0 +1,88 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Marc Solé Domènech — Product Management Leadership" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  </head>
+  <style is:global>
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.06s; }
+    .reveal-delay-2 { transition-delay: 0.12s; }
+    .reveal-delay-3 { transition-delay: 0.18s; }
+    .reveal-delay-4 { transition-delay: 0.24s; }
+  </style>
+  <body class="min-h-screen font-sans">
+    <header class="max-w-2xl mx-auto px-6 py-8">
+      <nav class="flex items-center justify-between">
+        <a href="/" class="text-sm font-medium text-neutral-900 hover:text-neutral-500 transition-colors">
+          Marc Solé Domènech
+        </a>
+        <ul class="flex gap-6 text-sm text-neutral-500">
+          <li><a href="/projects" class="hover:text-neutral-900 transition-colors">Projects</a></li>
+          <li><a href="/blog" class="hover:text-neutral-900 transition-colors">Thoughts</a></li>
+          <li><a href="/resume" class="hover:text-neutral-900 transition-colors">Resume</a></li>
+          <li><a href="/contact" class="hover:text-neutral-900 transition-colors">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="max-w-2xl mx-auto px-6 py-12">
+      <slot />
+    </main>
+
+    <footer class="max-w-2xl mx-auto px-6 py-8 mt-20 border-t border-neutral-100">
+      <p class="text-sm text-neutral-400">© {new Date().getFullYear()} Marc Solé Domènech</p>
+    </footer>
+
+    <script>
+      // Reveal on scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+      // Parallax on profile image (RAF throttled)
+      const img = document.getElementById('profile-img');
+      if (img) {
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              img.style.transform = `translateY(${window.scrollY * 0.1}px)`;
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
+      }
+    </script>
+  </body>
+</html>

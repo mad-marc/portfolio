@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    name: "Project One",
+    description: "A short description of what this project is, what problem it solves, and your role in it.",
+    tags: ["Product Strategy", "0→1"],
+    url: null,
+  },
+  {
+    name: "Project Two",
+    description: "A short description of what this project is, what problem it solves, and your role in it.",
+    tags: ["Growth", "B2B"],
+    url: null,
+  },
+  {
+    name: "Project Three",
+    description: "A short description of what this project is, what problem it solves, and your role in it.",
+    tags: ["Leadership", "Platform"],
+    url: null,
+  },
+];
+---
+
+<BaseLayout title="Projects — Marc Solé Domènech">
+  <h1 class="text-2xl font-semibold mb-3">Projects</h1>
+  <p class="text-neutral-500 text-sm mb-12">A selection of things I've built or led.</p>
+
+  <ul class="space-y-12">
+    {projects.map((project) => (
+      <li class="border-t border-neutral-100 pt-8">
+        <div class="flex items-start justify-between gap-4 mb-2">
+          <h2 class="text-base font-medium text-neutral-900">
+            {project.url ? (
+              <a href={project.url} target="_blank" rel="noopener" class="hover:text-neutral-500 transition-colors">
+                {project.name} ↗
+              </a>
+            ) : project.name}
+          </h2>
+          <div class="flex gap-2 flex-wrap justify-end">
+            {project.tags.map(tag => (
+              <span class="text-xs text-neutral-400 bg-neutral-50 px-2 py-0.5 rounded">{tag}</span>
+            ))}
+          </div>
+        </div>
+        <p class="text-sm text-neutral-600 leading-relaxed">{project.description}</p>
+      </li>
+    ))}
+  </ul>
+</BaseLayout>

@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contact — Marc Solé Domènech">
+  <h1 class="text-2xl font-semibold mb-3">Contact</h1>
+  <p class="text-neutral-500 text-sm mb-12">Get in touch.</p>
+
+  <ul class="space-y-4 text-sm">
+    <li class="flex items-center gap-3">
+      <span class="text-neutral-400 w-20">Email</span>
+      <a href="mailto:your@email.com" class="text-neutral-800 hover:text-neutral-500 transition-colors">
+        your@email.com
+      </a>
+    </li>
+    <li class="flex items-center gap-3">
+      <span class="text-neutral-400 w-20">LinkedIn</span>
+      <a href="#" target="_blank" rel="noopener" class="text-neutral-800 hover:text-neutral-500 transition-colors">
+        linkedin.com/in/yourhandle
+      </a>
+    </li>
+    <li class="flex items-center gap-3">
+      <span class="text-neutral-400 w-20">Twitter/X</span>
+      <a href="#" target="_blank" rel="noopener" class="text-neutral-800 hover:text-neutral-500 transition-colors">
+        @yourhandle
+      </a>
+    </li>
+  </ul>
+</BaseLayout>
