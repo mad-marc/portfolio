@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 interface Props {
   title: string;
   description?: string;
@@ -17,7 +19,7 @@ const { title, description = "Marc Solé Domènech — Product Management Leader
     <title>{title}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
   </head>
   <style is:global>
     .reveal {
@@ -37,14 +39,15 @@ const { title, description = "Marc Solé Domènech — Product Management Leader
   <body class="min-h-screen font-sans">
     <header class="max-w-2xl mx-auto px-6 py-8">
       <nav class="flex items-center justify-between">
-        <a href="/" class="text-sm font-medium text-neutral-900 hover:text-neutral-500 transition-colors">
-          Marc Solé Domènech
+        <a href="/" class="flex items-center gap-2.5 group">
+          <span class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white text-xs font-semibold tracking-wide shrink-0">MS</span>
+          <span class="text-sm font-medium text-brand-text group-hover:text-accent transition-colors">Marc Solé</span>
         </a>
         <ul class="flex gap-6 text-sm text-neutral-500">
-          <li><a href="/projects" class="hover:text-neutral-900 transition-colors">Projects</a></li>
-          <li><a href="/blog" class="hover:text-neutral-900 transition-colors">Thoughts</a></li>
-          <li><a href="/resume" class="hover:text-neutral-900 transition-colors">Resume</a></li>
-          <li><a href="/contact" class="hover:text-neutral-900 transition-colors">Contact</a></li>
+          <li><a href="/projects" class="hover:text-accent transition-colors">Projects</a></li>
+          <li><a href="/blog" class="hover:text-accent transition-colors">Thoughts</a></li>
+          <li><a href="/resume" class="hover:text-accent transition-colors">Resume</a></li>
+          <li><a href="/contact" class="hover:text-accent transition-colors">Contact</a></li>
         </ul>
       </nav>
     </header>

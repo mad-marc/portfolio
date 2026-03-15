@@ -4,7 +4,18 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+        serif: ['DM Serif Display', 'Georgia', 'serif'],
+      },
+      colors: {
+        accent: '#C4654A',
+      },
+      backgroundColor: {
+        page: '#FAFAF8',
+      },
+      textColor: {
+        primary: '#1a1a1a',
+        muted: '#6B7280',
       },
     },
   },
